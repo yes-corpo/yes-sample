@@ -1,0 +1,46 @@
+version: '3'
+
+services:
+  db:
+    container_name: db_yes_sample
+    image: mysql
+    environment:
+      - MYSQL_RANDOM_ROOT_PASSWORD=yes
+      - MYSQL_DATABASE=yes-sample
+      - MYSQL_USER=yes-sample
+      - MYSQL_PASSWORD=yes-sample
+    volumes:
+      - db-data:/var/lib/mysql
+
+  phpmyadmin:
+    container_name: phpmyadmin_yes_sample
+    image: phpmyadmin
+    ports:
+      - 8080:80
+    environment:
+      - PMA_HOST=db
+      - PMA_USER=yes-sample
+      - PMA_PASSWORD=yes-sample
+    depends_on:
+      - db
+
+  web:
+    container_name: web_yes_sample
+    build: .
+    ports:
+      - 8000:80
+    volumes:
+      - .:/var/www
+      - ./.docker/vhosts:/etc/apache2/sites-enabled
+    depends_on:
+      - db
+
+  maildev:
+    image: maildev/maildev
+    container_name: maildev_yes_sample
+    command: bin/maildev --web 80 --smtp 25 --hide-extensions STARTTLS
+    ports:
+      - 8081:80
+
+volumes:
+  db-data:

@@ -1,0 +1,22 @@
+name: Deploy Yes Sample
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    steps:
+    - name: Deploy in production
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.APP_IP }}
+        username: ${{ secrets.APP_USER }}
+        key: ${{ secrets.APP_KEY }}
+        script: |
+          cd yes-sample
+          git pull origin main
+          docker-compose -f .docker/prod/docker-compose.yml --project-name yes-sample up -d --build --remove-orphans
+          docker exec --user www-data -e APP_ENV=prod -e APP_DEBUG=0 web_yes_sample_prod composer install --no-dev --optimize-autoloader
+          docker exec --user www-data web_yes_sample_prod bin/console doctrine:migrations:migrate --no-interaction

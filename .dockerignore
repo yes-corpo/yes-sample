@@ -1,0 +1,14 @@
+.git/
+.github/
+.docker/
+.bash_aliases
+Dockerfile
+.dockerignore
+.gitignore
+docker-compose.yml
+phpunit.xml.dist
+tests/
+node_modules/
+vendor/
+var/
+src/DataFixtures/

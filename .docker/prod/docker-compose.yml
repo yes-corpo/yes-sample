@@ -1,0 +1,41 @@
+version: '3'
+
+services:
+  db:
+    container_name: db_yes_sample_prod
+    image: mysql:8.0.28
+    restart: always
+    environment:
+      - MYSQL_RANDOM_ROOT_PASSWORD=yes
+      - MYSQL_DATABASE=${MYSQL_DATABASE:-yes-sample}
+      - MYSQL_USER=${MYSQL_USER:-yes-sample}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD:-yes-sample}
+    volumes:
+      - db-data:/var/lib/mysql
+    networks:
+      - web
+
+  web:
+    container_name: web_yes_sample_prod
+    build:
+      context: ../../
+      dockerfile: .docker/prod/Dockerfile
+    restart: always
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.yessample.rule=Host(`yes-sampleo.com`)"
+      - "traefik.http.routers.yessample.entrypoints=websecure"
+    volumes:
+      - ./../vhosts:/etc/apache2/sites-enabled
+    depends_on:
+      - db
+    networks:
+      - web
+
+volumes:
+  db-data:
+  var:
+
+networks:
+  web:
+    external: true
