@@ -4,9 +4,26 @@ on:
     branches: [ main ]
 
 jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: 8.1
+    - name: Install dependencies
+      run: composer install --prefer-dist --no-interaction --no-suggest --optimize-autoloader
+    - name: Run tests
+      run: bin/phpunit
+    - name: Check if tests passed
+      run: if [ -n "$(grep 'failures:' tests/log/junit.xml)" ]; then exit 1; fi
+
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
+    needs: [test]
     steps:
     - name: Deploy in production
       uses: appleboy/ssh-action@master
