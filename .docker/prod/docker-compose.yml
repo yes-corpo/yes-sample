@@ -23,7 +23,7 @@ services:
     restart: always
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.yessample.rule=Host(`yes-sampleo.com`)"
+      - "traefik.http.routers.yessample.rule=Host(`yes-sample.com`)"
       - "traefik.http.routers.yessample.entrypoints=websecure"
     volumes:
       - ./../vhosts:/etc/apache2/sites-enabled
