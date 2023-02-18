@@ -35,6 +35,9 @@ RUN docker-php-ext-install \
     intl \
     zip
 
+RUN pecl install xdebug \
+    && docker-php-ext-enable xdebug
+
 RUN a2enmod rewrite \
     && service apache2 restart
 
